@@ -12,7 +12,7 @@ pub struct BenutzerAnfrage {
 impl BenutzerAnfrage {
     //schlüssel als globale variablen setzten
     //da keys sich nicht so einfach aus struct isolieren lassen -> weil compiliert
-    //einzigste variante -> eigenes macro schreiben! 
+    //einzigste variante -> eigenes macro schreiben!
     //TODO -> macro generieren -> wichtige lektion zum lernen!!!
     pub const KEY_BENUTZER: &'static str = "benutzer";
     pub const KEY_EMAIL: &'static str = "email";
@@ -44,7 +44,7 @@ pub fn parse_und_validiere_json(eingabe: &str) -> Result<BenutzerAnfrage, Fehler
     //prüfen ob inhalt in datei existiert
     if json_string.is_empty() {
         return Err(FehlerValidierung::LeereJsonDatei);
-    } 
+    }
 
     //gibt es öffnende und abschließende klammern {}
     if !json_string.starts_with("{") || !json_string.ends_with("}") {
@@ -64,7 +64,7 @@ pub fn parse_und_validiere_json(eingabe: &str) -> Result<BenutzerAnfrage, Fehler
     //flags setzten
     //erst über felder gehen und danach anhand von flags erst den fehler werfen
     //diese variante gefällt mir garnicht
-    //TODO -> bessere logik überlegen 
+    //TODO -> bessere logik überlegen
     let mut hat_benutzer_key = false;
     let mut hat_email_key = false;
     let mut hat_alter_key = false;
@@ -82,10 +82,21 @@ pub fn parse_und_validiere_json(eingabe: &str) -> Result<BenutzerAnfrage, Fehler
         }
     }
 
-    if !hat_benutzer_key { return Err(FehlerValidierung::FeldFehlt(BenutzerAnfrage::KEY_BENUTZER.to_string())); }
-    if !hat_email_key { return Err(FehlerValidierung::FeldFehlt(BenutzerAnfrage::KEY_EMAIL.to_string())); }
-    if !hat_alter_key { return Err(FehlerValidierung::FeldFehlt(BenutzerAnfrage::KEY_ALTER.to_string())); }
-
+    if !hat_benutzer_key {
+        return Err(FehlerValidierung::FeldFehlt(
+            BenutzerAnfrage::KEY_BENUTZER.to_string(),
+        ));
+    }
+    if !hat_email_key {
+        return Err(FehlerValidierung::FeldFehlt(
+            BenutzerAnfrage::KEY_EMAIL.to_string(),
+        ));
+    }
+    if !hat_alter_key {
+        return Err(FehlerValidierung::FeldFehlt(
+            BenutzerAnfrage::KEY_ALTER.to_string(),
+        ));
+    }
 
     //standardfehler während der entwicklung
     Err(FehlerValidierung::Testzustand)
@@ -122,7 +133,10 @@ mod tests {
             "alter": 23
         }"#;
         let ergebnis = parse_und_validiere_json(json);
-        assert_eq!(ergebnis, Err(FehlerValidierung::FeldFehlt("benutzer".to_string())));
+        assert_eq!(
+            ergebnis,
+            Err(FehlerValidierung::FeldFehlt("benutzer".to_string()))
+        );
     }
 
     #[test]
@@ -132,7 +146,10 @@ mod tests {
             "alter": 23
         }"#;
         let ergebnis = parse_und_validiere_json(json);
-        assert_eq!(ergebnis, Err(FehlerValidierung::FeldFehlt("email".to_string())));
+        assert_eq!(
+            ergebnis,
+            Err(FehlerValidierung::FeldFehlt("email".to_string()))
+        );
     }
 
     #[test]
@@ -142,7 +159,10 @@ mod tests {
             "benutzer": "rainer_zufall" 
         }"#;
         let ergebnis = parse_und_validiere_json(json);
-        assert_eq!(ergebnis, Err(FehlerValidierung::FeldFehlt("alter".to_string())));
+        assert_eq!(
+            ergebnis,
+            Err(FehlerValidierung::FeldFehlt("alter".to_string()))
+        );
     }
 
     #[test]
@@ -153,7 +173,10 @@ mod tests {
             "alter": "drei-und-zwanzig" 
         }"#;
         let ergebnis = parse_und_validiere_json(test_json);
-        assert_eq!(ergebnis, Err(FehlerValidierung::UngueltigerDatentyp("alter".to_string())));
+        assert_eq!(
+            ergebnis,
+            Err(FehlerValidierung::UngueltigerDatentyp("alter".to_string()))
+        );
     }
 
     #[test]
