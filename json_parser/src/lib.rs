@@ -25,7 +25,7 @@ pub fn print_testdatei() {
 
 //hauptfunktion die entwickelt werden soll
 pub fn parse_und_validiere_json(eingabe: &str) -> Result<BenutzerAnfrage, FehlerValidierung> {
-    if eingabe == "" {
+    if eingabe.trim().is_empty() {
         return Err(FehlerValidierung::LeereJsonDatei);
     } 
     Err(FehlerValidierung::FalschesJsonFormat)
@@ -38,6 +38,8 @@ mod tests {
     #[test]
     fn test_eingabe_von_leerer_datei_wirft_fehler() {
         let ergebnis = parse_und_validiere_json("");
+        assert_eq!(ergebnis, Err(FehlerValidierung::LeereJsonDatei));
+        let ergebnis = parse_und_validiere_json("   ");
         assert_eq!(ergebnis, Err(FehlerValidierung::LeereJsonDatei));
     }
 }
