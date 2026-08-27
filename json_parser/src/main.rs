@@ -10,4 +10,7 @@ fn main() {
     
     let error_wenn_leer = parse_und_validiere_json("");
     println!("result bei leerer json-datei----->\n{:#?}", error_wenn_leer);
+
+    //ausgaben zum debuggen
+    let _ = parse_und_validiere_json(json_string);
 }

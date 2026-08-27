@@ -27,9 +27,29 @@ pub fn print_testdatei() {
 
 //hauptfunktion die entwickelt werden soll
 pub fn parse_und_validiere_json(eingabe: &str) -> Result<BenutzerAnfrage, FehlerValidierung> {
-    if eingabe.trim().is_empty() {
+    //entfernt whitespaces und steuerzeichen
+    let json_string = eingabe.trim();
+
+    //prüfen ob inhalt in datei existiert
+    if json_string.is_empty() {
         return Err(FehlerValidierung::LeereJsonDatei);
     } 
+
+    //gibt es öffnende und abschließende klammern {}
+    if !json_string.starts_with("{") || !json_string.ends_with("}") {
+        return Err(FehlerValidierung::FalschesJsonFormat);
+    }
+
+    //inhalt zwischen { und } herauslösen
+    let json_inhalt = &json_string[1..&json_string.len() - 1].trim();
+    //sind die anführungszeichen ausgeglichen -> gerade anzahl von "
+    let anzahl_hochkommas = json_inhalt.chars().filter(|&c| c == '"').count();
+    //println!("summe hochkommas:{anzahl_hochkommas}");
+    //inhalt muss mit " beginnen -> name für ersten key
+    if anzahl_hochkommas % 2 != 0 || !json_inhalt.starts_with('"') {
+        return Err(FehlerValidierung::KaputteJson);
+    }
+
 
     //standardfehler während der entwicklung
     Err(FehlerValidierung::Testzustand)
