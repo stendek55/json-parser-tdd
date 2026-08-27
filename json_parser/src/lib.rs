@@ -72,29 +72,23 @@ impl BenutzerAnfrage {
         //println!("{pflichtfelder:?}");
         for pf in pflichtfelder {
             //println!("{}", pf);
-            if pf.contains(BenutzerAnfrage::KEY_BENUTZER) {
+            if pf.contains(Self::KEY_BENUTZER) {
                 hat_benutzer_key = true;
-            } else if pf.contains(BenutzerAnfrage::KEY_EMAIL) {
+            } else if pf.contains(Self::KEY_EMAIL) {
                 hat_email_key = true;
-            } else if pf.contains(BenutzerAnfrage::KEY_ALTER) {
+            } else if pf.contains(Self::KEY_ALTER) {
                 hat_alter_key = true;
             }
         }
 
         if !hat_benutzer_key {
-            return Err(FehlerValidierung::FeldFehlt(
-                BenutzerAnfrage::KEY_BENUTZER.to_string(),
-            ));
+            return Err(FehlerValidierung::FeldFehlt(Self::KEY_BENUTZER.to_string()));
         }
         if !hat_email_key {
-            return Err(FehlerValidierung::FeldFehlt(
-                BenutzerAnfrage::KEY_EMAIL.to_string(),
-            ));
+            return Err(FehlerValidierung::FeldFehlt(Self::KEY_EMAIL.to_string()));
         }
         if !hat_alter_key {
-            return Err(FehlerValidierung::FeldFehlt(
-                BenutzerAnfrage::KEY_ALTER.to_string(),
-            ));
+            return Err(FehlerValidierung::FeldFehlt(Self::KEY_ALTER.to_string()));
         }
 
         //standardfehler während der entwicklung
