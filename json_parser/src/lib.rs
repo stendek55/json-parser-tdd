@@ -24,7 +24,12 @@ pub fn print_testdatei() {
 }
 
 //hauptfunktion die entwickelt werden soll
-//pub fn parse_und_validiere_json(){}
+pub fn parse_und_validiere_json(eingabe: &str) -> Result<BenutzerAnfrage, FehlerValidierung> {
+    if eingabe == "" {
+        return Err(FehlerValidierung::LeereJsonDatei);
+    } 
+    Err(FehlerValidierung::FalschesJsonFormat)
+}
 
 #[cfg(test)]
 mod tests {
