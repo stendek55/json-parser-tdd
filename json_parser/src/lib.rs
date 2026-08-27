@@ -28,6 +28,7 @@ pub enum FehlerValidierung {
     FeldFehlt(String),
     EmailUngueltig,
     AlterZuJung,
+    UngueltigerDatentyp(String),
     Testzustand,
 }
 
@@ -67,11 +68,11 @@ pub fn parse_und_validiere_json(eingabe: &str) -> Result<BenutzerAnfrage, Fehler
     let mut hat_benutzer_key = false;
     let mut hat_email_key = false;
     let mut hat_alter_key = false;
-    println!("pflichfeldertests");
+    //println!("pflichfeldertests");
     let pflichtfelder = json_inhalt.split(",");
     //println!("{pflichtfelder:?}");
     for pf in pflichtfelder {
-        println!("{}", pf);
+        //println!("{}", pf);
         if pf.contains(BenutzerAnfrage::KEY_BENUTZER) {
             hat_benutzer_key = true;
         } else if pf.contains(BenutzerAnfrage::KEY_EMAIL) {
@@ -142,5 +143,38 @@ mod tests {
         }"#;
         let ergebnis = parse_und_validiere_json(json);
         assert_eq!(ergebnis, Err(FehlerValidierung::FeldFehlt("alter".to_string())));
+    }
+
+    #[test]
+    fn test_alter_hat_falschen_datentyp_string() {
+        let test_json = r#"{
+            "email": "foobar@rab.dd",
+            "benutzer": "rainer_zufall", 
+            "alter": "drei-und-zwanzig" 
+        }"#;
+        let ergebnis = parse_und_validiere_json(test_json);
+        assert_eq!(ergebnis, Err(FehlerValidierung::UngueltigerDatentyp("alter".to_string())));
+    }
+
+    #[test]
+    fn test_email_ohne_at_gibt_fehler() {
+        let test_json = r#"{
+            "email": "foobarrab.dd",
+            "benutzer": "rainer_zufall", 
+            "alter": "23" 
+        }"#;
+        let ergebnis = parse_und_validiere_json(test_json);
+        assert_eq!(ergebnis, Err(FehlerValidierung::EmailUngueltig));
+    }
+
+    #[test]
+    fn test_email_ohne_punkt_gibt_fehler() {
+        let test_json = r#"{
+            "email": "foobar@rabdd",
+            "benutzer": "rainer_zufall", 
+            "alter": "23" 
+        }"#;
+        let ergebnis = parse_und_validiere_json(test_json);
+        assert_eq!(ergebnis, Err(FehlerValidierung::EmailUngueltig));
     }
 }
