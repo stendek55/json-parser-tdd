@@ -9,6 +9,16 @@ pub struct BenutzerAnfrage {
     pub alter: u32,
 }
 
+impl BenutzerAnfrage {
+    //schlüssel als globale variablen setzten
+    //da keys sich nicht so einfach aus struct isolieren lassen -> weil compiliert
+    //einzigste variante -> eigenes macro schreiben! 
+    //TODO -> macro generieren -> wichtige lektion zum lernen!!!
+    pub const KEY_BENUTZER: &'static str = "benutzer";
+    pub const KEY_EMAIL: &'static str = "email";
+    pub const KEY_ALTER: &'static str = "alter";
+}
+
 //mögliche fehler die bei wandlung eintreten könn
 #[derive(Debug, PartialEq)]
 pub enum FehlerValidierung {
@@ -49,6 +59,31 @@ pub fn parse_und_validiere_json(eingabe: &str) -> Result<BenutzerAnfrage, Fehler
     if anzahl_hochkommas % 2 != 0 || !json_inhalt.starts_with('"') {
         return Err(FehlerValidierung::KaputteJson);
     }
+
+    //flags setzten
+    //erst über felder gehen und danach anhand von flags erst den fehler werfen
+    //diese variante gefällt mir garnicht
+    //TODO -> bessere logik überlegen 
+    let mut hat_benutzer_key = false;
+    let mut hat_email_key = false;
+    let mut hat_alter_key = false;
+    println!("pflichfeldertests");
+    let pflichtfelder = json_inhalt.split(",");
+    //println!("{pflichtfelder:?}");
+    for pf in pflichtfelder {
+        println!("{}", pf);
+        if pf.contains(BenutzerAnfrage::KEY_BENUTZER) {
+            hat_benutzer_key = true;
+        } else if pf.contains(BenutzerAnfrage::KEY_EMAIL) {
+            hat_email_key = true;
+        } else if pf.contains(BenutzerAnfrage::KEY_ALTER) {
+            hat_alter_key = true;
+        }
+    }
+
+    if !hat_benutzer_key { return Err(FehlerValidierung::FeldFehlt(BenutzerAnfrage::KEY_BENUTZER.to_string())); }
+    if !hat_email_key { return Err(FehlerValidierung::FeldFehlt(BenutzerAnfrage::KEY_EMAIL.to_string())); }
+    if !hat_alter_key { return Err(FehlerValidierung::FeldFehlt(BenutzerAnfrage::KEY_ALTER.to_string())); }
 
 
     //standardfehler während der entwicklung
