@@ -14,9 +14,11 @@ pub struct BenutzerAnfrage {
 pub enum FehlerValidierung {
     LeereJsonDatei,
     FalschesJsonFormat,
+    KaputteJson,
     FeldFehlt(String),
     EmailUngueltig,
     AlterZuJung,
+    Testzustand,
 }
 
 pub fn print_testdatei() {
@@ -28,7 +30,9 @@ pub fn parse_und_validiere_json(eingabe: &str) -> Result<BenutzerAnfrage, Fehler
     if eingabe.trim().is_empty() {
         return Err(FehlerValidierung::LeereJsonDatei);
     } 
-    Err(FehlerValidierung::FalschesJsonFormat)
+
+    //standardfehler während der entwicklung
+    Err(FehlerValidierung::Testzustand)
 }
 
 #[cfg(test)]
@@ -41,5 +45,17 @@ mod tests {
         assert_eq!(ergebnis, Err(FehlerValidierung::LeereJsonDatei));
         let ergebnis = parse_und_validiere_json("   ");
         assert_eq!(ergebnis, Err(FehlerValidierung::LeereJsonDatei));
+    }
+
+    #[test]
+    fn test_pruefe_json_auf_oeffnende_schliessende_klammer() {
+        let ergebnis = parse_und_validiere_json("ohne klammern");
+        assert_eq!(ergebnis, Err(FehlerValidierung::FalschesJsonFormat));
+    }
+
+    #[test]
+    fn test_inhalt_der_json_ist_unfug() {
+        let ergebnis = parse_und_validiere_json("{+da5-i5t_k@uderwel$ch~}");
+        assert_eq!(ergebnis, Err(FehlerValidierung::KaputteJson));
     }
 }
