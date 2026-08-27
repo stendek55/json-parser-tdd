@@ -78,4 +78,34 @@ mod tests {
         let ergebnis = parse_und_validiere_json("{+da5-i5t_k@uderwel$ch~}");
         assert_eq!(ergebnis, Err(FehlerValidierung::KaputteJson));
     }
+
+    #[test]
+    fn test_fehlendes_pflichtfeld_benutzer() {
+        let json = r#"{
+            "email": "foobar@rab.dd",
+            "alter": 23
+        }"#;
+        let ergebnis = parse_und_validiere_json(json);
+        assert_eq!(ergebnis, Err(FehlerValidierung::FeldFehlt("benutzer".to_string())));
+    }
+
+    #[test]
+    fn test_fehlendes_pflichtfeld_email() {
+        let json = r#"{
+            "benutzer": "rainer_zufall",
+            "alter": 23
+        }"#;
+        let ergebnis = parse_und_validiere_json(json);
+        assert_eq!(ergebnis, Err(FehlerValidierung::FeldFehlt("email".to_string())));
+    }
+
+    #[test]
+    fn test_fehlendes_pflichtfeld_alter() {
+        let json = r#"{
+            "email": "foobar@rab.dd",
+            "benutzer": "rainer_zufall" 
+        }"#;
+        let ergebnis = parse_und_validiere_json(json);
+        assert_eq!(ergebnis, Err(FehlerValidierung::FeldFehlt("alter".to_string())));
+    }
 }
