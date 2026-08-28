@@ -91,6 +91,34 @@ impl BenutzerAnfrage {
             return Err(FehlerValidierung::FeldFehlt(Self::KEY_ALTER.to_string()));
         }
 
+        // datentyp vom alter prüfen
+        // das ergibt genau den text: "alter"
+        let such_muster = format!("\"{}\"", Self::KEY_ALTER);
+
+        // suchen nach diesem key im JSON-string
+        if let Some(key_pos) = eingabe.find(&such_muster) {
+            // alles abschneiden was VOR dem suchmuster kam
+            let text_ab_alter = &eingabe[key_pos..];
+
+            // suchen den doppelpunkt der nach dem "alter" kommt
+            if let Some(doppelpunkt_pos) = text_ab_alter.find(':') {
+                // schneidet alles vor dem doppelpunkt ab
+                let text_ab_wert = &text_ab_alter[doppelpunkt_pos + 1..];
+
+                // entfernt leerzeichen und zeilenumbrüche am anfang
+                let bereinigter_text = text_ab_wert.trim_start();
+
+                // typ-PRÜFUNG
+                // wenn der wert mit anführungszeichen " beginnt ist es ein string
+                if bereinigter_text.starts_with('"') {
+                    // fehlermeldung rausgebene
+                    return Err(FehlerValidierung::UngueltigerDatentyp(
+                        Self::KEY_ALTER.to_string(),
+                    ));
+                }
+            }
+        }
+
         //standardfehler während der entwicklung
         Err(FehlerValidierung::Testzustand)
     }
