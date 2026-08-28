@@ -91,6 +91,37 @@ impl BenutzerAnfrage {
             return Err(FehlerValidierung::FeldFehlt(Self::KEY_ALTER.to_string()));
         }
 
+        // email auf @ und . prüfen
+        let email_muster = format!("\"{}\"", Self::KEY_EMAIL);
+
+        if let Some(key_pos) = eingabe.find(&email_muster) {
+            let text_ab_email = &eingabe[key_pos..];
+
+            if let Some(doppelpunkt_pos) = text_ab_email.find(':') {
+                let text_ab_wert = &text_ab_email[doppelpunkt_pos + 1..];
+                let bereinigter_text = text_ab_wert.trim_start();
+
+                // prüfen ob mit " beginnt UND schneidet es gleichzeitig ab!
+                if let Some(email_inhalt_start) = bereinigter_text.strip_prefix('"') {
+                    // suchen das schließende anführungszeichen der mail-adresse
+                    if let Some(ende_pos) = email_inhalt_start.find('"') {
+                        // die reine mail-adresse
+                        let email_adresse = &email_inhalt_start[..ende_pos];
+
+                        // prüfen '@'
+                        if !email_adresse.contains('@') {
+                            return Err(FehlerValidierung::EmailUngueltig);
+                        }
+
+                        // prüfen auf '.'
+                        if !email_adresse.contains('.') {
+                            return Err(FehlerValidierung::EmailUngueltig);
+                        }
+                    }
+                }
+            }
+        }
+
         // datentyp vom alter prüfen
         // das ergibt genau den text: "alter"
         let such_muster = format!("\"{}\"", Self::KEY_ALTER);
@@ -118,7 +149,6 @@ impl BenutzerAnfrage {
                 }
             }
         }
-
         //standardfehler während der entwicklung
         Err(FehlerValidierung::Testzustand)
     }
