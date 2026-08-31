@@ -157,14 +157,15 @@ impl BenutzerAnfrage {
                     // typmatching geschautz werden kann
                     match alter_wert.trim().parse::<u32>() {
                         Ok(alter) => {
-                            println!("alter korrekter wert u8 und ist {}", alter);
+                            // ausgabe zum debuggen
+                            //println!("alter korrekter wert u8 und ist {}", alter);
                             if alter < 18 {
                                 return Err(FehlerValidierung::AlterZuJung);
                             }
                             gutes_alter = alter;
                         }
                         Err(_) => {
-                            println!("gein gültiger u8 wert");
+                            // println!("gein gültiger u8 wert");
                             return Err(FehlerValidierung::UngueltigerDatentyp(
                                 Self::KEY_ALTER.to_string(),
                             ));
@@ -190,11 +191,13 @@ impl BenutzerAnfrage {
     }
     //hauptfunktion die entwickelt werden soll
     pub fn parse_und_validiere_json(eingabe: &str) -> Result<BenutzerAnfrage, FehlerValidierung> {
+        //aufruf der eigenen prüfmethoden
         let json_inhalt = Self::pruefe_basis_json_struktur(eingabe)?;
         let json_mit_feldern = Self::pruefe_pflichtfelder(json_inhalt)?;
         let json_ok = Self::pruefe_email(json_mit_feldern)?;
         let alter_ok = Self::pruefe_alter(json_ok)?;
 
+        // anlegen der benötigten variablen für die feldwerte
         let mut extrahierter_benutzer = String::new();
         let mut extrahierte_email = String::new();
         let extrahiertes_alter = alter_ok;
