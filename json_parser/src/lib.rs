@@ -136,6 +136,26 @@ impl BenutzerAnfrage {
                 // schneidet alles vor dem doppelpunkt ab
                 let text_ab_wert = &text_ab_alter[doppelpunkt_pos + 1..];
 
+                if let Some(zeilenumbruch_pos) = text_ab_wert.find("\n") {
+                    // nimmt alles bis zum zeilenumbruch
+                    let alter_wert = &text_ab_wert[..zeilenumbruch_pos];
+                    // entscheidung hier für die match version
+                    // anstatt des kürzeren if let (wo nur erfolögsfall)
+                    // weil so auch der fehlerfall zur verfügung steht und nochmals genauer auf
+                    // typmatching geschautz werden kann
+                    match alter_wert.trim().parse::<u8>() {
+                        Ok(alter) => {
+                            println!("alter korrekter wert u8 und ist {}", alter);
+                            if alter < 18 {
+                                return Err(FehlerValidierung::AlterZuJung);
+                            }
+                        }
+                        Err(_) => {
+                            println!("gein gültiger u8 wert");
+                        }
+                    }
+                }
+
                 // entfernt leerzeichen und zeilenumbrüche am anfang
                 let bereinigter_text = text_ab_wert.trim_start();
 
