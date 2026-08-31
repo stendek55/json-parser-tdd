@@ -152,6 +152,9 @@ impl BenutzerAnfrage {
                         }
                         Err(_) => {
                             println!("gein gültiger u8 wert");
+                            return Err(FehlerValidierung::UngueltigerDatentyp(
+                                Self::KEY_ALTER.to_string(),
+                            ));
                         }
                     }
                 }
