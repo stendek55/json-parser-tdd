@@ -252,4 +252,26 @@ mod tests {
         let ergebnis = BenutzerAnfrage::parse_und_validiere_json(test_json);
         assert_eq!(ergebnis, Err(FehlerValidierung::EmailUngueltig));
     }
+
+    #[test]
+    fn test_gibt_fehler_wenn_alter_zu_jung_unter_18() {
+        let test_json = r#"{
+            "email": "unter18@zujung.de",
+            "benutzer": "rainer_zufall", 
+            "alter": 17 
+        }"#;
+        let ergebnis = BenutzerAnfrage::parse_und_validiere_json(test_json);
+        assert_eq!(ergebnis, Err(FehlerValidierung::AlterZuJung));
+    }
+
+    #[test]
+    fn test_gibt_fehler_wenn_alter_zu_jung_extremfall_0() {
+        let test_json = r#"{
+            "email": "baby@schlaf.de",
+            "benutzer": "rainer_zufall", 
+            "alter": 0 
+        }"#;
+        let ergebnis = BenutzerAnfrage::parse_und_validiere_json(test_json);
+        assert_eq!(ergebnis, Err(FehlerValidierung::AlterZuJung));
+    }
 }
