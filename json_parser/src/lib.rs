@@ -35,8 +35,7 @@ impl BenutzerAnfrage {
     pub const KEY_EMAIL: &'static str = "email";
     pub const KEY_ALTER: &'static str = "alter";
 
-    //hauptfunktion die entwickelt werden soll
-    pub fn parse_und_validiere_json(eingabe: &str) -> Result<BenutzerAnfrage, FehlerValidierung> {
+    pub fn pruefe_basis_json_struktur(eingabe: &str) -> Result<&str, FehlerValidierung> {
         //entfernt whitespaces und steuerzeichen
         let json_string = eingabe.trim();
 
@@ -60,6 +59,10 @@ impl BenutzerAnfrage {
             return Err(FehlerValidierung::KaputteJson);
         }
 
+        Ok(json_string)
+    }
+
+    pub fn pruefe_pflichtfelder(eingabe: &str) -> Result<&str, FehlerValidierung> {
         //flags setzten
         //erst über felder gehen und danach anhand von flags erst den fehler werfen
         //diese variante gefällt mir garnicht
@@ -68,7 +71,7 @@ impl BenutzerAnfrage {
         let mut hat_email_key = false;
         let mut hat_alter_key = false;
         //println!("pflichfeldertests");
-        let pflichtfelder = json_inhalt.split(",");
+        let pflichtfelder = eingabe.split(",");
         //println!("{pflichtfelder:?}");
         for pf in pflichtfelder {
             //println!("{}", pf);
@@ -91,6 +94,10 @@ impl BenutzerAnfrage {
             return Err(FehlerValidierung::FeldFehlt(Self::KEY_ALTER.to_string()));
         }
 
+        Ok(eingabe)
+    }
+
+    pub fn pruefe_email(eingabe: &str) -> Result<&str, FehlerValidierung> {
         // email auf @ und . prüfen
         let email_muster = format!("\"{}\"", Self::KEY_EMAIL);
 
@@ -122,6 +129,10 @@ impl BenutzerAnfrage {
             }
         }
 
+        Ok(eingabe)
+    }
+
+    pub fn pruefe_alter(eingabe: &str) -> Result<&str, FehlerValidierung> {
         // datentyp vom alter prüfen
         // das ergibt genau den text: "alter"
         let such_muster = format!("\"{}\"", Self::KEY_ALTER);
@@ -172,6 +183,16 @@ impl BenutzerAnfrage {
                 }
             }
         }
+
+        Ok(eingabe)
+    }
+    //hauptfunktion die entwickelt werden soll
+    pub fn parse_und_validiere_json(eingabe: &str) -> Result<BenutzerAnfrage, FehlerValidierung> {
+        let json_inhalt = Self::pruefe_basis_json_struktur(eingabe)?;
+        let json_mit_feldern = Self::pruefe_pflichtfelder(json_inhalt)?;
+        let json_emails_ok = Self::pruefe_email(json_mit_feldern)?;
+        let json_ok = Self::pruefe_alter(json_emails_ok)?;
+
         //standardfehler während der entwicklung
         Err(FehlerValidierung::Testzustand)
     }
