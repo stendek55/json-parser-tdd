@@ -132,7 +132,8 @@ impl BenutzerAnfrage {
         Ok(eingabe)
     }
 
-    pub fn pruefe_alter(eingabe: &str) -> Result<&str, FehlerValidierung> {
+    pub fn pruefe_alter(eingabe: &str) -> Result<u32, FehlerValidierung> {
+        let mut gutes_alter: u32 = 0;
         // datentyp vom alter prüfen
         // das ergibt genau den text: "alter"
         let such_muster = format!("\"{}\"", Self::KEY_ALTER);
@@ -154,12 +155,13 @@ impl BenutzerAnfrage {
                     // anstatt des kürzeren if let (wo nur erfolögsfall)
                     // weil so auch der fehlerfall zur verfügung steht und nochmals genauer auf
                     // typmatching geschautz werden kann
-                    match alter_wert.trim().parse::<u8>() {
+                    match alter_wert.trim().parse::<u32>() {
                         Ok(alter) => {
                             println!("alter korrekter wert u8 und ist {}", alter);
                             if alter < 18 {
                                 return Err(FehlerValidierung::AlterZuJung);
                             }
+                            gutes_alter = alter;
                         }
                         Err(_) => {
                             println!("gein gültiger u8 wert");
@@ -184,17 +186,41 @@ impl BenutzerAnfrage {
             }
         }
 
-        Ok(eingabe)
+        Ok(gutes_alter)
     }
     //hauptfunktion die entwickelt werden soll
     pub fn parse_und_validiere_json(eingabe: &str) -> Result<BenutzerAnfrage, FehlerValidierung> {
         let json_inhalt = Self::pruefe_basis_json_struktur(eingabe)?;
         let json_mit_feldern = Self::pruefe_pflichtfelder(json_inhalt)?;
-        let json_emails_ok = Self::pruefe_email(json_mit_feldern)?;
-        let json_ok = Self::pruefe_alter(json_emails_ok)?;
+        let json_ok = Self::pruefe_email(json_mit_feldern)?;
+        let alter_ok = Self::pruefe_alter(json_ok)?;
 
-        //standardfehler während der entwicklung
-        Err(FehlerValidierung::Testzustand)
+        let mut extrahierter_benutzer = String::new();
+        let mut extrahierte_email = String::new();
+        let extrahiertes_alter = alter_ok;
+
+        // über geprüft korrektes json gehen und final die benötigten werte auslösen
+        for feld in json_ok.split(',') {
+            if let Some((key, val)) = feld.split_once(':') {
+                // zur sicherheit explizit alles angeben was entfernt werden soll
+                let zeichen_entfernen = &['"', '{', '}', '\n', '\t', '\r', ' '][..];
+                let sauberer_key = key.trim().trim_matches(zeichen_entfernen);
+                let sauberer_wert = val.trim().trim_matches(zeichen_entfernen);
+
+                match sauberer_key {
+                    Self::KEY_BENUTZER => extrahierter_benutzer = sauberer_wert.to_string(),
+                    Self::KEY_EMAIL => extrahierte_email = sauberer_wert.to_string(),
+                    _ => {}
+                }
+            }
+        }
+
+        // final das struct befüllen und zurückgeben
+        Ok(Self {
+            benutzer: extrahierter_benutzer,
+            email: extrahierte_email,
+            alter: extrahiertes_alter,
+        })
     }
 }
 

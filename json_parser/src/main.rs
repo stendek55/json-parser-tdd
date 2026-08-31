@@ -12,5 +12,10 @@ fn main() {
     println!("result bei leerer json-datei----->\n{:#?}", error_wenn_leer);
 
     //ausgaben zum debuggen
-    let _ = BenutzerAnfrage::parse_und_validiere_json(json_string);
+    let ergebnis_struktur = BenutzerAnfrage::parse_und_validiere_json(json_string);
+
+    println!("####################################################################");
+    println!("#############----- FINALE -----#####################################");
+    println!("####################################################################");
+    println!("{:#?}", ergebnis_struktur);
 }
