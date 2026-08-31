@@ -294,4 +294,18 @@ mod tests {
         let ergebnis = BenutzerAnfrage::parse_und_validiere_json(test_json);
         assert_eq!(ergebnis, Err(FehlerValidierung::AlterZuJung));
     }
+
+    #[test]
+    fn test_gibt_fehler_wenn_alter_dezimalzahl() {
+        let test_json = r#"{
+            "email": "ahoi@welt.dd",
+            "benutzer": "rainer_zufall", 
+            "alter": 23.42 
+        }"#;
+        let ergebnis = BenutzerAnfrage::parse_und_validiere_json(test_json);
+        assert_eq!(
+            ergebnis,
+            Err(FehlerValidierung::UngueltigerDatentyp("alter".to_string()))
+        );
+    }
 }
