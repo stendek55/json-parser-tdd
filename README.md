@@ -1,9 +1,10 @@
-# 🧪 Test-Driven JSON Parser & Validator in Rust
+# Test-Driven JSON Parser & Validator in Rust
 
 Ein robuster, komplett **testgetrieben (TDD)** entwickelter JSON-Parser und Validator in Rust. Das Projekt wurde ohne externe Parsing-Bibliotheken implementiert, um das Zusammenspiel von sicherem Speicher-Handling (`&str`), der Transformation von Daten und striktem Fehler-Design in Rust zu meistern.
 
 ---
-## 🎓 Projekt-Kontext & Lernziel
+
+## Projekt-Kontext & Lernziel
 
 Dieses Projekt ist **eines meiner ersten Projekte in der Programmiersprache Rust**. Es ist bewusst im Rahmen eines intensiven Lernprozesses entstanden. 
 
@@ -11,18 +12,18 @@ Dieses Projekt ist **eines meiner ersten Projekte in der Programmiersprache Rust
 * **Das Ziel:** Ich wollte mich nicht auf fertige Magie verlassen, sondern die Kernkonzepte von Rust von Grund auf erzwingen und tiefgründig verstehen. Dazu gehören das strikte Ownership-Modell, das Arbeiten mit String-Slices (`&str`), Speicherallokation, die Fehlerbehandlung via `Result` und `Match` sowie das Schreiben von sauberen Unit-Tests.
 ---
 
-## 🎯 Der TDD-Entwicklungszyklus (Red-Green-Refactor)
+## Der TDD-Entwicklungszyklus (Red-Green-Refactor)
 
 Dieses Projekt folgt strikt dem TDD-Paradigma. Jedes Feature und jede Validierungsregel wurde nach dem klassischen Dreischritt aufgebaut:
-1. ***commits -> test:*** **🔴 Red:** Schreiben eines fehlschlagenden Integrationstests (z. B. für unvollständige Datentypen oder Altersgrenzen). 
-2. ***commits -> feat:*** **🟢 Green:** Implementierung des minimal notwendigen Produktionscodes, bis `cargo test` erfolgreich durchläuft. 
-3. ***commits -> refactor:*** **🔵 Refactor:** Modularisierung und Auslagerung des Codes in isolierte Prüffunktionen, abgesichert durch die bestehende Test-Suite.
+1. ***commits -> test:*** Schreiben eines fehlschlagenden Integrationstests (z. B. für unvollständige Datentypen oder Altersgrenzen). 
+2. ***commits -> feat:*** Implementierung des minimal notwendigen Produktionscodes, bis `cargo test` erfolgreich durchläuft. 
+3. ***commits -> refactor:*** Modularisierung und Auslagerung des Codes in isolierte Prüffunktionen, abgesichert durch die bestehende Test-Suite.
 
 Dank dieses Ansatzes ist die Pipeline zu 100 % regressionstestgesichert.
 
 ---
 
-## 🚀 Die Validierungs-Pipeline
+## Die Validierungs-Pipeline
 
 Der Eingabe-String durchläuft vier isolierte, testgesicherte Phasen, bevor er in die Zielstruktur überführt wird:
 
@@ -43,7 +44,7 @@ Der Eingabe-String durchläuft vier isolierte, testgesicherte Phasen, bevor er i
 ```
 ---
 
-## 📋 Strikte Typisierung & Fehler-Katalog
+## Strikte Typisierung & Fehler-Katalog
 
 ### Die Zielstruktur
 ```rust
@@ -67,7 +68,7 @@ Der Parser nutzt das `Result`-Muster von Rust und wirft zu keinem Zeitpunkt Lauf
 
 ---
 
-## 🛠️ Ausführung & Testumgebung
+## Ausführung & Testumgebung
 
 Da der Parser nativ geschrieben ist, benötigst du keine externen Crates.
 
