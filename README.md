@@ -1,3 +1,8 @@
+---
+---
+# ........ eigenständiges übungsprojekt ........
+---
+---
 # Test-Driven JSON Parser & Validator in Rust
 
 Ein robuster, komplett **testgetrieben (TDD)** entwickelter JSON-Parser und Validator in Rust. Das Projekt wurde ohne externe Parsing-Bibliotheken implementiert, um das Zusammenspiel von sicherem Speicher-Handling (`&str`), der Transformation von Daten und striktem Fehler-Design in Rust zu meistern.
